@@ -33,7 +33,7 @@ func (o *OmniClient) GetBalance(address string, propertyid uint32) (balance, res
 	var result balanceResult
 
 	if err := c.Call(&result, "omni_getbalance", address, propertyid); err != nil {
-		log.Fatalf("Call %v", err)
+		log.Printf("Call %v", err)
 	}
 
 	return result.Balance, result.Reserved
@@ -60,7 +60,7 @@ func (o *OmniClient) ListTransactions(args ...interface{}) (result []Tx) {
 	c := rpc.NewClient(o.ConnCfg)
 
 	if err := c.Call(&result, "omni_listtransactions", args...); err != nil {
-		log.Fatalf("Call %v", err)
+		log.Printf("Call %v", err)
 	}
 
 	return
@@ -85,11 +85,38 @@ func (o *OmniClient) Send(fromaddress, toaddress string, propertyid uint32, amou
 	c := rpc.NewClient(o.ConnCfg)
 
 	if err := c.Call(&hash, "omni_send", fromaddress, toaddress, propertyid, amount); err != nil {
-		log.Fatalf("Call %v", err)
+		log.Printf("Call %v", err)
 	}
 
 	return
 }
+
+
+func (o *OmniClient) GetBlockCount() int64 {
+	c := rpc.NewClient(o.ConnCfg)
+
+	var count int64 = 0
+	if err := c.Call(&count, "getblockcount"); err != nil {
+		log.Printf("Call %v", err)
+	}
+
+	return count
+}
+
+func (o *OmniClient) GetTransaction(txid string) *Tx {
+
+	c := rpc.NewClient(o.ConnCfg)
+	var result Tx
+
+	if err := c.Call(&result, "omni_gettransaction", txid); err != nil {
+		log.Printf("Call %v", err)
+	}
+
+	return &result
+}
+
+
+
 
 //暂不实现
 //== Omni layer (configuration) ==
