@@ -81,16 +81,16 @@ func (o *OmniClient) ListTransactions(args ...interface{}) (result []Tx) {
 // Result:
 //
 // "hash"                  (string) the hex-encoded transaction hash
-func (o *OmniClient) Send(fromaddress, toaddress string, propertyid uint32, amount string) (hash string) {
+func (o *OmniClient) Send(fromaddress, toaddress string, propertyid uint32, amount string) (string, error) {
 	c := rpc.NewClient(o.ConnCfg)
-
+	var hash string
 	if err := c.Call(&hash, "omni_send", fromaddress, toaddress, propertyid, amount); err != nil {
-		log.Printf("Call %v", err)
+		//log.Printf("Call %v", err)
+		return hash, err
 	}
 
-	return
+	return hash, nil
 }
-
 
 func (o *OmniClient) GetBlockCount() int64 {
 	c := rpc.NewClient(o.ConnCfg)
@@ -114,9 +114,6 @@ func (o *OmniClient) GetTransaction(txid string) *Tx {
 
 	return &result
 }
-
-
-
 
 //暂不实现
 //== Omni layer (configuration) ==
